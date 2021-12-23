@@ -1,0 +1,15 @@
+.header {
+  border: 1px slategray solid;
+  border-radius: 3px;
+  padding: 20px;
+  margin-bottom: 10px;
+  font-size: 30px;
+}
+
+.list {
+  width: max-content;
+}
+
+.list-item {
+  margin-bottom: 3px;
+}
