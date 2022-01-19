@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Cat, User } from "../types";
-import { getCats } from "../api";
+import { User } from "../types";
+import { useDispatch, useSelector } from "react-redux";
+import { getCatsThunk, selectCats } from "../catSlice";
 
 export default function CatList({ user }: { user: User }) {
-  const [cats, setCats] = useState<Cat[]>([]);
+  const dispatch = useDispatch();
+  const cats = useSelector(selectCats);
 
   useEffect(() => {
-    getCats().then(setCats).catch(console.error);
+    dispatch(getCatsThunk());
   }, []);
 
   return (

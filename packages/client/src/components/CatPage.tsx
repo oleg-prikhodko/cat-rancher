@@ -1,39 +1,51 @@
 import { useNavigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { deleteCat, getCat, updateCat } from "../api";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  deleteCatThunk,
+  getCatByIdThunk,
+  selectCatById,
+  updateCatThunk,
+} from "../catSlice";
+import { AppDispatch } from "../store";
+import { Cat } from "../types";
 
 const initialData = { name: "", size: "", age: "" };
 
 export default function CatPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [cat, setCat] = useState(initialData);
+  const dispatch = useDispatch<AppDispatch>();
+  const cat = useSelector(selectCatById(+id!));
+  const [catData, setCatData] = useState(initialData);
 
   useEffect(() => {
     if (id) {
-      getCat(id).then(setCat).catch(console.error);
+      dispatch(getCatByIdThunk(id)).then((result) => {
+        if ("error" in result) return;
+        const cat = result.payload as Cat;
+        setCatData({
+          name: cat.name,
+          size: cat.size,
+          age: cat.age.toString(),
+        });
+      });
     }
   }, [id]);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    updateCat(id!, cat)
-      .then((resp) => {
-        if (resp.ok) {
-          navigate("/");
-        }
-      })
-      .catch(console.error);
+    dispatch(updateCatThunk({ id: id!, catData })).then((result) => {
+      if ("error" in result) return;
+      navigate("/");
+    });
   };
 
   const handleDelete = () => {
-    deleteCat(id!)
-      .then((resp) => {
-        if (resp.ok) {
-          navigate("/");
-        }
-      })
-      .catch(console.error);
+    dispatch(deleteCatThunk(id!)).then((result) => {
+      if ("error" in result) return;
+      navigate("/");
+    });
   };
 
   if (!cat) return null;
@@ -47,7 +59,7 @@ export default function CatPage() {
             type="text"
             value={cat.name}
             onChange={(evt) =>
-              setCat((cat) => ({ ...cat, name: evt.target.value }))
+              setCatData((cat) => ({ ...cat, name: evt.target.value }))
             }
           />
         </label>
@@ -57,7 +69,7 @@ export default function CatPage() {
           <select
             value={cat.size}
             onChange={(evt) =>
-              setCat((cat) => ({ ...cat, size: evt.target.value }))
+              setCatData((cat) => ({ ...cat, size: evt.target.value }))
             }
           >
             <option value="" disabled>
@@ -75,7 +87,7 @@ export default function CatPage() {
             type="number"
             value={cat.age}
             onChange={(evt) =>
-              setCat((cat) => ({ ...cat, age: evt.target.value }))
+              setCatData((cat) => ({ ...cat, age: evt.target.value }))
             }
           />
         </label>

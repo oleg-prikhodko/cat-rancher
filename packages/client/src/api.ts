@@ -1,4 +1,4 @@
-import { CatFormData, User } from "./types";
+import { Cat, CatFormData, User } from "./types";
 import { GoogleLoginResponse } from "react-google-login";
 
 function handleError(err: any) {
@@ -24,11 +24,11 @@ export async function loginGoogle(resp: GoogleLoginResponse) {
   }
 }
 
-export function getCats() {
+export function getCats(): Promise<Cat[]> {
   return fetch("/api/cats").then((resp) => resp.json());
 }
 
-export function getCat(id: string) {
+export function getCat(id: string): Promise<Cat> {
   return fetch(`/api/cats/${id}`).then((resp) => resp.json());
 }
 
@@ -40,7 +40,13 @@ export function createCat(catData: CatFormData) {
   });
 }
 
-export function updateCat(id: string, catData: CatFormData) {
+export function updateCat({
+  id,
+  catData,
+}: {
+  id: string;
+  catData: CatFormData;
+}) {
   return fetch(`/api/cats/${id}`, {
     method: "PATCH",
     body: JSON.stringify(catData),

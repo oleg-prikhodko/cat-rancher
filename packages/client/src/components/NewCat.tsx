@@ -1,22 +1,22 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createCat } from "../api";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../store";
+import { createCatThunk } from "../catSlice";
 
 const initialData = { name: "", size: "", age: "" };
 
 export default function NewCat() {
   const [catData, setCatData] = useState(initialData);
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    createCat(catData)
-      .then((resp) => {
-        if (resp.ok) {
-          navigate("/");
-        }
-      })
-      .catch(console.error);
+    dispatch(createCatThunk(catData)).then((result) => {
+      if ("error" in result) return;
+      navigate("/");
+    });
   };
 
   return (
