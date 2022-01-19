@@ -9,6 +9,7 @@ import {
 } from "../catSlice";
 import { AppDispatch } from "../store";
 import { Cat } from "../types";
+import CatForm from "./CatForm";
 
 const initialData = { name: "", size: "", age: "" };
 
@@ -52,51 +53,15 @@ export default function CatPage() {
   return (
     <>
       <h3>Edit cat</h3>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Name:
-          <input
-            type="text"
-            value={cat.name}
-            onChange={(evt) =>
-              setCatData((cat) => ({ ...cat, name: evt.target.value }))
-            }
-          />
-        </label>
-        <br />
-        <label>
-          Size:
-          <select
-            value={cat.size}
-            onChange={(evt) =>
-              setCatData((cat) => ({ ...cat, size: evt.target.value }))
-            }
-          >
-            <option value="" disabled>
-              -- Select size --
-            </option>
-            <option value="small">Small</option>
-            <option value="regular">Regular</option>
-            <option value="large">Large</option>
-          </select>
-        </label>
-        <br />
-        <label>
-          Age:
-          <input
-            type="number"
-            value={cat.age}
-            onChange={(evt) =>
-              setCatData((cat) => ({ ...cat, age: evt.target.value }))
-            }
-          />
-        </label>
-        <br />
-        <button type="submit">Save</button>
+      <CatForm
+        onSubmit={handleSubmit}
+        catData={catData}
+        updateCatData={setCatData}
+      >
         <button type="button" onClick={handleDelete}>
           Delete
         </button>
-      </form>
+      </CatForm>
     </>
   );
 }
